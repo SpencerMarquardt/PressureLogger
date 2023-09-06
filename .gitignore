@@ -1,0 +1,10 @@
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/data/pressureLog_2023-09-06_11-25-49.csv
+/.idea/PressureLogger.iml
+/PressureLogger.pyproject
+/PressureLogger.pyproject.user
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
