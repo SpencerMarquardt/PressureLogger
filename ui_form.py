@@ -9,16 +9,17 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+                           QFont, QFontDatabase, QGradient, QIcon,
+                           QImage, QKeySequence, QLinearGradient, QPainter,
+                           QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractSpinBox, QApplication, QComboBox, QFrame,
-    QHBoxLayout, QLabel, QMainWindow, QMenuBar,
-    QPushButton, QSizePolicy, QSpinBox, QStatusBar,
-    QVBoxLayout, QWidget)
+                               QHBoxLayout, QLabel, QMainWindow, QMenuBar,
+                               QPushButton, QSizePolicy, QSpinBox, QStatusBar,
+                               QVBoxLayout, QWidget)
+
 
 class Ui_PressureWidget(object):
     def setupUi(self, PressureWidget):
@@ -49,7 +50,6 @@ class Ui_PressureWidget(object):
 
         self.verticalLayout.addWidget(self.pressureDisplay)
 
-
         self.horizontalLayout_3.addWidget(self.frame_3)
 
         self.frame_2 = QFrame(self.centralwidget)
@@ -73,7 +73,6 @@ class Ui_PressureWidget(object):
 
         self.horizontalLayout_2.addWidget(self.minutesSpinBox)
 
-
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
 
         self.csvButton = QPushButton(self.frame_2)
@@ -81,9 +80,7 @@ class Ui_PressureWidget(object):
 
         self.verticalLayout_4.addWidget(self.csvButton)
 
-
         self.horizontalLayout_3.addWidget(self.frame_2)
-
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
@@ -130,12 +127,9 @@ class Ui_PressureWidget(object):
 
         self.verticalLayout2.addWidget(self.refreshNotificationLabel)
 
-
         self.horizontalLayout.addLayout(self.verticalLayout2)
 
-
         self.verticalLayout_2.addWidget(self.frame)
-
 
         self.verticalLayout_3.addLayout(self.verticalLayout_2)
 
@@ -151,6 +145,7 @@ class Ui_PressureWidget(object):
         self.retranslateUi(PressureWidget)
 
         QMetaObject.connectSlotsByName(PressureWidget)
+
     # setupUi
 
     def retranslateUi(self, PressureWidget):
@@ -161,8 +156,13 @@ class Ui_PressureWidget(object):
         self.csvButton.setText(QCoreApplication.translate("PressureWidget", u"Log to .csv", None))
         self.connectButton.setText(QCoreApplication.translate("PressureWidget", u"Connect", None))
         self.refreshPortsButton.setText(QCoreApplication.translate("PressureWidget", u"Refresh Ports", None))
-        self.label.setText(QCoreApplication.translate("PressureWidget", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:700;\">Connection Status:</span></p></body></html>", None))
-        self.connectionStatus.setText(QCoreApplication.translate("PressureWidget", u"<html><head/><body><p><span style=\" font-size:10pt;\">Connection Status </span></p></body></html>", None))
-        self.refreshNotificationLabel.setText(QCoreApplication.translate("PressureWidget", u"<html><head/><body><p><span style=\" font-size:10pt;\">Connection message</span></p></body></html>", None))
+        self.label.setText(QCoreApplication.translate("PressureWidget",
+                                                      u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:700;\">Connection Status:</span></p></body></html>",
+                                                      None))
+        self.connectionStatus.setText(QCoreApplication.translate("PressureWidget",
+                                                                 u"<html><head/><body><p><span style=\" font-size:10pt;\">Connection Status </span></p></body></html>",
+                                                                 None))
+        self.refreshNotificationLabel.setText(QCoreApplication.translate("PressureWidget",
+                                                                         u"<html><head/><body><p><span style=\" font-size:10pt;\">Connection message</span></p></body></html>",
+                                                                         None))
     # retranslateUi
-

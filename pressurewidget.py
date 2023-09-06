@@ -11,12 +11,12 @@ from PySide6.QtCore import QTimer
 import time
 import pyqtgraph as pg
 
-
 # Important:
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic form.ui -o ui_form.py, or
 #     pyside2-uic form.ui -o ui_form.py
 from ui_form import Ui_PressureWidget
+
 
 class PressureWidget(QMainWindow):
     def __init__(self, parent=None):
@@ -137,8 +137,8 @@ class PressureWidget(QMainWindow):
         try:
             if self.serial_port.in_waiting:
                 data = self.serial_port.readline().decode('utf-8').strip()
-                pressure_atm = round(float(data) * 0.000986923, 4) # Convert mbar string to atm float w/4 sig figs
-                data = str(pressure_atm) # convert back to string for the display
+                pressure_atm = round(float(data) * 0.000986923, 4)  # Convert mbar string to atm float w/4 sig figs
+                data = str(pressure_atm)  # convert back to string for the display
                 self.ui.pressureDisplay.setText(f'{data} atm')
                 self.current_time = time.time()
                 elapsed_time = self.current_time - self.start_time
@@ -158,17 +158,15 @@ class PressureWidget(QMainWindow):
                     self.serial_port.close()
                 self.was_connected = False  # Reset the flag since the connection is now lost
 
-
     def setup_plot(self):
         # Initialize plot
         self.plotWidget = pg.PlotWidget()
         self.ui.verticalLayout.addWidget(self.plotWidget)
         self.curve = self.plotWidget.plot(pen=pg.mkPen('b', width=2))
-        styles = {'color':'k', 'font-size': '20px'}
-        self.plotWidget.setLabel('left', 'Pressure (atm)',**styles)
+        styles = {'color': 'k', 'font-size': '20px'}
+        self.plotWidget.setLabel('left', 'Pressure (atm)', **styles)
         self.plotWidget.setLabel('bottom', 'Elapsed Time (s)', **styles)
         self.plotWidget.setBackground('w')
-
 
     def update_plot(self):
         self.curve.setData(self.time_data, self.pressure_data)
@@ -180,7 +178,8 @@ class PressureWidget(QMainWindow):
         start_time = current_time - seconds_to_show
 
         # Filter the pressure data based on the time window
-        pressure_data_to_consider = [pressure for t, pressure in zip(self.time_data, self.pressure_data) if t >= start_time]
+        pressure_data_to_consider = [pressure for t, pressure in zip(self.time_data, self.pressure_data) if
+                                     t >= start_time]
 
         # Adjust the X-axis range based on the spinbox value
         self.plotWidget.setXRange(start_time, current_time)
@@ -219,7 +218,7 @@ class PressureWidget(QMainWindow):
             self.is_logging = False
             self.ui.csvButton.setText('Log to .csv')
         else:
-            directory_path = self.choose_file_location() # Browse for directory
+            directory_path = self.choose_file_location()  # Browse for directory
             if directory_path:  # Only proceed if a valid path was provided
                 self.is_logging = True
                 timestamp = time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime(self.current_time))
