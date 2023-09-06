@@ -17,4 +17,6 @@ A simple Python application interfaces with an Adafruit Qt Py 2040 via a serial 
   * `cd <project-directory>`
   * `pip install PySide6 pyqtgraph pyserial`
 * Generate the 'ui_form.py' file if not available `pyside6-uic form.ui -o ui_form.py`
-* 
+
+## Usage:
+* To run the application: `python pressurewidget.py`
