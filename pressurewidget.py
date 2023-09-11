@@ -48,7 +48,7 @@ class PressureWidget(QMainWindow):
         # Create a QTimer to read serial data
         self.serial_timer = QTimer(self)
         self.serial_timer.timeout.connect(self.read_serial)
-        self.serial_timer.start(1000)  # Read every 1000 ms (1 second)
+        self.serial_timer.start(500)  # Read every 1000 ms (1 second)
 
         # Timer to update available ports
         # connect the timer to a notification function
@@ -59,7 +59,7 @@ class PressureWidget(QMainWindow):
         # Timer to check connection status
         self.connection_check_timer = QTimer(self)
         self.connection_check_timer.timeout.connect(self.check_connection_status)
-        self.connection_check_timer.start(2000)  # Check every 2 seconds
+        self.connection_check_timer.start(500)  # Check every .5 seconds
 
     # Add items to portList combobox when called
     def connect_serial_port(self):
@@ -150,6 +150,8 @@ class PressureWidget(QMainWindow):
                 self.save_to_csv(self.current_time, pressure_atm)
 
         except serial.SerialException:
+            self.stop_logging()
+            self.ui.csvButton.setEnabled(False)
             if self.was_connected:
                 # This block will execute if there's a serial connection error and we were previously connected
                 self.ui.connectionStatus.setText("Connection lost")
@@ -191,8 +193,8 @@ class PressureWidget(QMainWindow):
         else:
             y_min, y_max = .9, 1.1  # Default values
         # Set the range about the max and min pressure values to display
-        y_min = y_min - .05
-        y_max = y_max + .05
+        y_min = y_min - .01
+        y_max = y_max + .01
         self.plotWidget.setYRange(y_min, y_max)
 
     def choose_file_location(self):
@@ -215,18 +217,26 @@ class PressureWidget(QMainWindow):
 
     def toggle_logging(self):
         if self.is_logging:
+            self.stop_logging()
+        else:
+            # Get the save path from a dialog
+            save_path = QFileDialog.getExistingDirectory(self, "Choose Save Location")
+            if not save_path:
+                return
+            # Construct the csv file path with the desired filename
+            formatted_time = datetime.datetime.fromtimestamp(self.current_time).strftime('%Y-%m-%d_%H-%M-%S')
+            self.csv_file_path = os.path.join(save_path, f"pressureLog_{formatted_time}.csv")
+            self.is_logging = True
+            self.ui.csvButton.setText('Stop Logging')
+
+    def stop_logging(self):
+        if self.is_logging:
             self.is_logging = False
             self.ui.csvButton.setText('Log to .csv')
-        else:
-            directory_path = self.choose_file_location()  # Browse for directory
-            if directory_path:  # Only proceed if a valid path was provided
-                self.is_logging = True
-                timestamp = time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime(self.current_time))
-                file_name = f"pressureLog_{timestamp}.csv"
-                self.csv_file_path = os.path.join(directory_path, file_name)
-                self.ui.csvButton.setText('Stop Logging')
+            # You can add any other logic related to saving or finalizing the csv here if needed
 
     def closeEvent(self, event):
+        self.stop_logging()
         if self.serial_port.is_open:
             self.serial_port.close()
         self.port_update_timer.stop()
