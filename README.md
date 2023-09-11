@@ -13,6 +13,7 @@ A simple Python application interfaces with an Adafruit Qt Py 2040 via a serial 
 
 ## Setup and Installation:
 * Clone the repository: `git clone https://github.com/SpencerMarquardt/PressureLogger`
+* Update the repository: `git pull --rebase https://github.com/SpencerMarquardt/PressureLogger`
 * Navigate to the project directory and install the required Python packages:
   * `cd <project-directory>`
   * `pip install PySide6 pyqtgraph pyserial`
