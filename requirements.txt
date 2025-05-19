@@ -3,3 +3,4 @@ pyinstaller
 qt_material
 pyserial
 pywin32
+pyqtgraph

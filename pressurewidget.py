@@ -6,8 +6,8 @@ import os
 import datetime
 from serial.tools import list_ports
 from collections import deque
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PySide6.QtCore import QTimer
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PyQt6.QtCore import QTimer
 import time
 import pyqtgraph as pg
 
@@ -15,7 +15,7 @@ import pyqtgraph as pg
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic mainwindow.ui -o ui_form.py, or
 #     pyside2-uic mainwindow.ui -o ui_form.py
-from app.ui.ui_form import Ui_PressureWidget
+from app.ui.ui_mainwindow import Ui_PressureWidget
 
 
 class PressureWidget(QMainWindow):
