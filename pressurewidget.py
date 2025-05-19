@@ -13,9 +13,9 @@ import pyqtgraph as pg
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
-#     pyside6-uic form.ui -o ui_form.py, or
-#     pyside2-uic form.ui -o ui_form.py
-from ui_form import Ui_PressureWidget
+#     pyside6-uic mainwindow.ui -o ui_form.py, or
+#     pyside2-uic mainwindow.ui -o ui_form.py
+from app.ui.ui_form import Ui_PressureWidget
 
 
 class PressureWidget(QMainWindow):
