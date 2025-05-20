@@ -11,10 +11,6 @@ from PyQt6.QtCore import QTimer
 import time
 import pyqtgraph as pg
 
-# Important:
-# You need to run the following command to generate the ui_form.py file
-#     pyside6-uic mainwindow.ui -o ui_form.py, or
-#     pyside2-uic mainwindow.ui -o ui_form.py
 from app.ui.ui_mainwindow import Ui_PressureWidget
 
 
@@ -60,6 +56,8 @@ class PressureWidget(QMainWindow):
         self.connection_check_timer = QTimer(self)
         self.connection_check_timer.timeout.connect(self.check_connection_status)
         self.connection_check_timer.start(500)  # Check every .5 seconds
+
+
 
     # Add items to portList combobox when called
     def connect_serial_port(self):
