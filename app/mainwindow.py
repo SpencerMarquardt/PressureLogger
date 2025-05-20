@@ -1,7 +1,8 @@
-from PyQt6.QtWidgets import QMainWindow
-from PyQt6.QtGui import QIcon
-from app.ui.ui_mainwindow import Ui_PressureWidget
+from PyQt6.QtWidgets import QMainWindow, QFileDialog
+from datetime import datetime
 import os
+# custom imports
+from app.ui.ui_mainwindow import Ui_PressureWidget
 from app.controllers.serial_device_listener import SerialDeviceListener, get_serial_ports
 from app.controllers.pressure_serial_controller import PressureSerialController
 from app.models.pressure_model import PressureModel
@@ -16,11 +17,15 @@ class MainWindow(QMainWindow):
     # Initialize views and design
         self.setWindowTitle("MPRLS Pressure Logger")
         self.ui.pressureDisplay.setText('0.00 mbar')
+        self.ui.csvButton.setEnabled(False)  # Disable at startup
+        self.ui.csvButton.setText("Start Logging")
+
     # Initialize variables
         self.selected_port = None
         self.pressure_controller = None
         self.pressure_model = PressureModel()
-
+        self.logging_active = False
+        
     # Initialize a listener for serial device changes
         self.device_listener = SerialDeviceListener(self.update_serial_devices_combobox)
         self.device_listener.start()
@@ -28,6 +33,7 @@ class MainWindow(QMainWindow):
 
     # Handle signals
         self.ui.connectButton.clicked.connect(self.connect_to_selected_port)
+        self.ui.csvButton.clicked.connect(self.handle_csv_button)
 
     def update_serial_devices_combobox(self):
         available_ports = get_serial_ports()
@@ -55,6 +61,32 @@ class MainWindow(QMainWindow):
 
     def update_connection_status(self, connected):
         self.ui.connectionStatus.setText("Connected" if connected else "Disconnected")
+        self.ui.csvButton.setEnabled(connected)
 
     def update_refresh_notification(self, message):
         self.ui.refreshNotificationLabel.setText(message)
+
+    def handle_csv_button(self):
+        if not self.logging_active:
+            # Start logging
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            default_filename = f"{timestamp}_pressure.csv"
+
+            file_path, _ = QFileDialog.getSaveFileName(
+                self,
+                "Select CSV Log File",
+                default_filename,
+                "CSV Files (*.csv);;All Files (*)"
+            )
+
+            if file_path:
+                self.pressure_model.set_log_path(file_path)
+                self.update_refresh_notification(f"Logging to: {file_path}")
+                self.ui.csvButton.setText("Stop Logging")
+                self.logging_active = True
+        else:
+            # Stop logging
+            self.pressure_model.set_log_path(None)
+            self.update_refresh_notification("Logging stopped.")
+            self.ui.csvButton.setText("Start Logging")
+            self.logging_active = False
