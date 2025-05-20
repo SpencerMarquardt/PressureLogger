@@ -17,6 +17,9 @@ class Ui_PressureWidget(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.pressurePlotWidget = PlotWidget(parent=self.centralwidget)
+        self.pressurePlotWidget.setObjectName("pressurePlotWidget")
+        self.verticalLayout_3.addWidget(self.pressurePlotWidget)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
@@ -113,3 +116,4 @@ class Ui_PressureWidget(object):
         self.label.setText(_translate("PressureWidget", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:700;\">Connection Status:</span></p></body></html>"))
         self.connectionStatus.setText(_translate("PressureWidget", "<html><head/><body><p><span style=\" font-size:10pt;\">Connection Status </span></p></body></html>"))
         self.refreshNotificationLabel.setText(_translate("PressureWidget", "<html><head/><body><p><span style=\" font-size:10pt;\">Connection message</span></p></body></html>"))
+from pyqtgraph import PlotWidget
