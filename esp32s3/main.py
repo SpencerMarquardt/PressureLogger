@@ -10,4 +10,5 @@ mprls = adafruit_MPRLS.MPRLS.create_instance(i2c)
 while True:
     p = mprls.pressure
     print(f'Pressure: {p} mbar')
+    print(p)
     utime.sleep_ms(1000)

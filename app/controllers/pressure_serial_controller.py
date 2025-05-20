@@ -5,6 +5,7 @@ import time
 class PressureSerialController(QThread):
     pressure_received = pyqtSignal(float)
     status_updated = pyqtSignal(str)
+    connection_state_changed = pyqtSignal(bool)
 
     def __init__(self, port_name, baudrate=115200, parent=None):
         super().__init__(parent)
@@ -16,12 +17,14 @@ class PressureSerialController(QThread):
     def run(self):
         try:
             self.serial = serial.Serial(self.port_name, self.baudrate, timeout=1)
-            self.status_updated.emit(f"Connected to {self.port_name}")
             self.running = True
+            self.connection_state_changed.emit(True)  # Connected
+            self.status_updated.emit(f"Connected to {self.port_name}")
 
             while self.running:
                 if self.serial.in_waiting:
                     line = self.serial.readline().decode("utf-8").strip()
+                    print(line)
                     try:
                         pressure = float(line)
                         self.pressure_received.emit(pressure)
@@ -33,6 +36,7 @@ class PressureSerialController(QThread):
         finally:
             if self.serial and self.serial.is_open:
                 self.serial.close()
+            self.connection_state_changed.emit(False)  # Disconnected
             self.status_updated.emit(f"Serial port {self.port_name} closed")
 
     def stop(self):
