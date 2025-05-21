@@ -18,24 +18,31 @@ class MainWindow(QMainWindow):
 
     # Initialize views and design
         self.setWindowTitle("MPRLS Pressure Logger")
-        self.ui.pressureDisplay.setText('0.00 mbar')
+        # self.ui.pressureDisplay.setText('0.00 mbar')
         self.ui.csvButton.setEnabled(False)  # Disable at startup
         self.ui.csvButton.setText("Start Logging")
         self.pressure_plot = self.ui.pressurePlotWidget
+        self.pressure_curves = None
         self.initialize_plot()
-        
-    # Initialize variables
+        self.legend = None
+
+        # Initialize variables
         self.selected_port = None
         self.pressure_controller = None
         self.pressure_model = PressureModel()
         self.logging_active = False
-
+        self.unit = "mbar"
+        self.unit_conversion = {
+            "mbar": lambda x: x,
+            "torr": lambda x: x * 0.750061683
+        }
     # Initialize a listener for serial device changes
         self.device_listener = SerialDeviceListener(self.update_serial_devices_combobox)
         self.device_listener.start()
         self.update_serial_devices_combobox()
 
     # Handle signals
+        self.ui.pressureUnitComboBox.currentTextChanged.connect(self.change_unit)
 
         self.ui.connectButton.clicked.connect(self.connect_to_selected_port)
         self.ui.csvButton.clicked.connect(self.handle_csv_button)
@@ -81,9 +88,14 @@ class MainWindow(QMainWindow):
         self.pressure_controller.pressure_received.connect(self.pressure_model.add_reading)
         self.pressure_controller.start()
 
-
-    def update_pressure_display(self, pressure):
-        self.ui.pressureDisplay.setText(f"{pressure:.4f} mbar")
+    def update_pressure_display(self, pressure_dict):
+        for n, ch in enumerate(sorted(pressure_dict.keys())):
+            val = pressure_dict[ch]
+            label_name = f"pressureDisplay_{n}"
+            label = getattr(self.ui, label_name, None)
+            if label:
+                val_converted = self.unit_conversion[self.unit](val)
+                label.setText(f"{ch}: {val_converted:.2f} {self.unit}")
 
     def update_connection_status(self, connected):
         self.ui.connectionStatus.setText("Connected" if connected else "Disconnected")
@@ -125,24 +137,57 @@ class MainWindow(QMainWindow):
             self.logging_active = False
 
     def initialize_plot(self):
-        # Initialize the plot
-
+        # Set background and grid
         self.pressure_plot.setBackground('w')
         self.pressure_plot.showGrid(x=True, y=True)
-        self.pressure_plot.setLabel('left', 'Pressure', units='mbar')
+
+        # Customize axis tick and label colors
+        label_style = {'color': 'k', 'font-size': '14pt'}
+        for axis in ['left', 'bottom']:
+            ax = self.pressure_plot.getAxis(axis)
+            ax.setTextPen('k')  # Tick label color
+            ax.setPen('k')  # Axis line color
+            ax.setLabel(**label_style)
+
+        # Axis labels
+        self.pressure_plot.setLabel('left', 'Pressure (mbar)', units='')
         self.pressure_plot.setLabel('bottom', 'Time', units='s')
 
-        self.pressure_curve = self.pressure_plot.plot(pen=pg.mkPen(color='b', width=2))
+        self.pressure_curves = {
+            "CH0": self.pressure_plot.plot(pen=pg.mkPen('b', width=2)),
+            "CH1": self.pressure_plot.plot(pen=pg.mkPen('r', width=2)),
+        }
+        # Legend
+        self.legend = self.pressure_plot.addLegend()
+        self.legend.setBrush(pg.mkBrush(255, 255, 255, 200))
+        self.legend.setPen(pg.mkPen('k'))
+        self.legend.anchor((0, 0), (0, 0))
+
+        for ch, curve in self.pressure_curves.items():
+            self.legend.addItem(curve, ch)
+
+        # Make legend text black and larger
+        for _, label in self.legend.items:
+            if hasattr(label, 'item') and hasattr(label.item, 'setStyleSheet'):
+                label.item.setStyleSheet("color: black; font-size: 12pt;")
 
     def update_plot(self):
         minutes = self.ui.minutesSpinBox.value()
-        data = self.pressure_model.get_recent_data(minutes)
+        for channel, curve in self.pressure_curves.items():
+            data = self.pressure_model.get_recent_data(minutes, channel=channel)
+            if not data:
+                curve.setData([], [])
+                continue
 
-        if not data:
-            self.pressure_curve.setData([], [])
-            return
+            timestamps, pressures = zip(*data)
+            t0 = datetime.fromisoformat(timestamps[0])
+            times_sec = [(datetime.fromisoformat(ts) - t0).total_seconds() for ts in timestamps]
+            pressures_converted = [self.unit_conversion[self.unit](p) for p in pressures]
+            curve.setData(times_sec, pressures_converted)
 
-        timestamps, pressures = zip(*data)
-        times_sec = [(datetime.fromisoformat(ts) - datetime.fromisoformat(timestamps[0])).total_seconds() for ts in
-                     timestamps]
-        self.pressure_curve.setData(times_sec, pressures)
+        # Update y-axis label
+        self.pressure_plot.setLabel('left', f'Pressure ({self.unit})', units='')
+
+    def change_unit(self, unit_text):
+        self.unit = unit_text
+        self.update_plot()  # Refresh plot with new unit

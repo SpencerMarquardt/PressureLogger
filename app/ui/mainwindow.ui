@@ -32,7 +32,23 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLabel" name="pressureDisplay">
+            <widget class="QLabel" name="pressureDisplay_0">
+             <property name="font">
+              <font>
+               <pointsize>20</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>0.0000 atm</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="pressureDisplay_1">
              <property name="font">
               <font>
                <pointsize>20</pointsize>
@@ -60,15 +76,15 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
+            <layout class="QFormLayout" name="formLayout">
+             <item row="0" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
                 <string>Show last:</string>
                </property>
               </widget>
              </item>
-             <item>
+             <item row="0" column="1">
               <widget class="QSpinBox" name="minutesSpinBox">
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::UpDownArrows</enum>
@@ -82,6 +98,50 @@
                <property name="value">
                 <number>2</number>
                </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="sampleRateLabel">
+               <property name="text">
+                <string>Sample Rate</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="sampleRateSpinBox">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="suffix">
+                <string>ms</string>
+               </property>
+               <property name="minimum">
+                <number>100</number>
+               </property>
+               <property name="maximum">
+                <number>5000</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="pressureUnitLabel">
+               <property name="text">
+                <string>Pressure Unit</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="pressureUnitComboBox">
+               <item>
+                <property name="text">
+                 <string>mbar</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>torr</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>

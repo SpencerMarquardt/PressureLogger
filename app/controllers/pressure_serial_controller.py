@@ -25,7 +25,7 @@ class PressureSerialController(QThread):
                 if self.serial.in_waiting:
                     try:
                         line = self.serial.readline().decode("utf-8").strip()
-                        print(f"Received: {line}")
+                        print(f"Pressure Controller Received: {line}")
 
                         data = json.loads(line)
 
