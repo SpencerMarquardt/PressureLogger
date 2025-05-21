@@ -1,9 +1,9 @@
 from PyQt6.QtCore import QThread, pyqtSignal
 import serial
 import time
-
+import json
 class PressureSerialController(QThread):
-    pressure_received = pyqtSignal(float)
+    pressure_received = pyqtSignal(dict)
     status_updated = pyqtSignal(str)
     connection_state_changed = pyqtSignal(bool)
 
@@ -23,14 +23,27 @@ class PressureSerialController(QThread):
 
             while self.running:
                 if self.serial.in_waiting:
-                    line = self.serial.readline().decode("utf-8").strip()
-                    print(line)
                     try:
-                        pressure = float(line)
-                        self.pressure_received.emit(pressure)
+                        line = self.serial.readline().decode("utf-8").strip()
+                        print(f"Received: {line}")
+
+                        data = json.loads(line)
+
+                        # Emit only if it's a dict of numeric pressures
+                        if isinstance(data, dict) and all(isinstance(v, (int, float)) for v in data.values()):
+                            self.pressure_received.emit(data)
+                        elif 'error' in data:
+                            self.status_updated.emit(f"Device error: {data['error']}")
+                        else:
+                            self.status_updated.emit("Unrecognized data format")
+
                     except ValueError:
-                        self.status_updated.emit(f"Invalid pressure {line}")
+                        self.status_updated.emit("Invalid JSON received")
+                    except Exception as e:
+                        self.status_updated.emit(f"Parse error: {str(e)}")
+
                 time.sleep(0.05)
+
         except serial.SerialException:
             self.status_updated.emit(f"Serial port {self.port_name} not found")
         finally:
