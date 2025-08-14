@@ -17,6 +17,9 @@ A simple Python application interfaces with an Adafruit Qt Py 2040 via a serial 
 * Navigate to the project directory and install the required Python packages:
   * `cd <project-directory>`
   * `pip install PySide6 pyqtgraph pyserial`
+  * or all at once: `pip install -r requirements.txt`
+* Install the Qt Designer plugin for PySide6: `pip install pyside6-tools`
+* Open the 'form.ui' file in Qt Designer and save the file as 'form.py'`
 * Generate the 'ui_form.py' file if not available `pyside6-uic form.ui -o ui_form.py`
 
 ## Usage:
