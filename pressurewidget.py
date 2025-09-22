@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PySide6.QtCore import QTimer
 import time
 import pyqtgraph as pg
+import json
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
@@ -137,6 +138,7 @@ class PressureWidget(QMainWindow):
         try:
             if self.serial_port.in_waiting:
                 data = self.serial_port.readline().decode('utf-8').strip()
+                data = json.loads(data).get("CH0", None)
                 pressure_atm = round(float(data) * 0.000986923, 4)  # Convert mbar string to atm float w/4 sig figs
                 data = str(pressure_atm)  # convert back to string for the display
                 self.ui.pressureDisplay.setText(f'{data} atm')
